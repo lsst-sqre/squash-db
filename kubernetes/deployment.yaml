@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: squash-db
+  labels:
+    app: squash-api
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: squash-api
+    spec:
+      containers:
+      # based on mariadb and restore qadb
+      - image: mariadb:10.3
+        name: mariadb
+        env:
+        # kubectl create secret generic mysql-pass --from-file=passwd.txt
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-passwd
+              key: passwd.txt
+        ports:
+        - containerPort: 3306
+          name: mariadb
+        volumeMounts:
+        - name: mysql-persistent-volume
+          # where MySQL by default write its data files
+          mountPath: /var/lib/mysql
+        - name: mysql-conf
+          mountPath: '/etc/mysql/conf.d'
+      volumes:
+      - name: mysql-persistent-volume
+        persistentVolumeClaim:
+          claimName: mysql-volume-claim
+      - name: mysql-conf
+        configMap:
+          name: mysql-conf
+          items:
+            - key: 'squash-db.cnf'
+              path: 'squash-db.cnf'

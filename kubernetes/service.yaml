@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: squash-db
+  labels:
+    app: squash-api
+spec:
+  ports:
+    - protocol: TCP
+      port: 3306
+  selector:
+    app: squash-api
+  type: LoadBalancer
+
