@@ -4,11 +4,13 @@ metadata:
   name: squash-db
   labels:
     app: squash-api
+# target port 3306 on any Pod with the squash-api label
 spec:
+  selector:
+    app: squash-api
   ports:
     - protocol: TCP
       port: 3306
-  selector:
-    app: squash-api
-  type: LoadBalancer
+      targetPort: 3306
+  type: ClusterIP
 
