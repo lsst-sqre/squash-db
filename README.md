@@ -54,7 +54,7 @@ aws s3 cp s3://jenkins-prod-qadb.lsst.codes-backups/qadb/latest.sql.gz .
 gzip -d latest.sql.gz
 
 # copy the database dump to the squash-db pod
-kubectl cp latest.sql <squash-db pod> 
+kubectl cp latest.sql <squash-db pod>:/
 
 # open a terminal inside the squash-db pod
 kubectl exec <squash-db pod> --stdin --tty -c mariadb /bin/sh
