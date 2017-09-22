@@ -25,10 +25,10 @@ service:
 
 deployment: secret configmap service
 	@echo "Creating deployment..."
-	kubectl delete --ignore-not-found=true PersistentVolume mysql-volume-1
 
-	@if [ "${MINIKUBE}" = "true" ]; then\
-	    echo "Creating a local volume fro minikube...";\
+	kubectl delete --ignore-not-found=true PersistentVolume mysql-volume-1
+	@if [ "${LOCAL_VOLUME}" = "true" ]; then\
+	    echo "Creating a local persistent volume ...";\
 	    kubectl create -f $(LOCAL_VOLUME_CONFIG);\
 	else\
 	    echo "Creating a GKE persistent volume...";\
