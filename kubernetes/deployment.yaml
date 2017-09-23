@@ -14,10 +14,17 @@ spec:
       containers:
       # based on mariadb and restore qadb
       - image: mariadb:10.3
+        imagePullPolicy: "Always"
         name: mariadb
         env:
-        # kubectl create secret generic mysql-pass --from-file=passwd.txt
-        - name: MYSQL_ROOT_PASSWORD
+        # kubectl create secret generic mysql-passwd --from-file=passwd.txt
+        - name: MYSQL_RANDOM_ROOT_PASSWORD
+          value: "yes"
+        - name: MYSQL_DATABASE
+          value: "qadb"
+        - name: MYSQL_USER
+          value: "squash"
+        - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
               name: mysql-passwd
