@@ -19,12 +19,6 @@ Provision a Kubernetes cluster in GKE, and then deploy `squash-db` microservice 
   make deployment
 ```
 
-NOTE: for local deployment with `minikube` there's the option of using a [local persistent volume](kubernetes/local_volume.yaml). If using `minikube` make the deployment with:
- 
-```
-  MINIKUBE=true make deployment
-```
-
 The [Kubernetes deployment](kubernetes/deployment.yaml) uses the official [`mariadb:10.3`](https://hub.docker.com/_/mariadb/) image. The
 database password you provide in `passwd.txt` is stored as a secret (and it is also used by the `squash-api`) [Customized configuration](kubernetes/mysql/squash-db.cnf) 
 for mysql is added through a configmap. Finally, the persistent volume for the database is previously created, and then [claimed during the deployment](kubernetes/persistent_volume_claim.yaml).  
@@ -57,13 +51,13 @@ gzip -d latest.sql.gz
 kubectl cp latest.sql <squash-db pod>:/
 
 # open a terminal inside the squash-db pod
-kubectl exec <squash-db pod> --stdin --tty -c mariadb /bin/sh
+kubectl exec -it <squash-db pod> -c mariadb /bin/bash
     
 mysql -uroot -p<passwd> -e "CREATE DATABASE qadb"
 mysql -uroot -p<passwd> qadb < latest.sql
 
 # open a terminal inside the squash-api pod
-kubectl exec <squash-api pod> --stdin --tty -c api /bin/sh
+kubectl exec -it <squash-api pod> -c api /bin/bash
 
 # Apply migrations
 python manage.py makemigrations

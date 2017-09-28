@@ -3,20 +3,24 @@ kind: Deployment
 metadata:
   name: squash-db
   labels:
-    app: squash-api
+    app: squash
 spec:
-  replicas: 1
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
-        app: squash-api
+        app: squash
+        tier: backend
     spec:
       containers:
-      # based on mariadb and restore qadb
       - image: mariadb:10.3
+        imagePullPolicy: "Always"
         name: mariadb
         env:
-        # kubectl create secret generic mysql-pass --from-file=passwd.txt
+        # kubectl create secret generic mysql-passwd --from-file=passwd.txt
+        - name: MYSQL_DATABASE
+          value: qadb
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -30,7 +34,7 @@ spec:
           # where MySQL by default write its data files
           mountPath: /var/lib/mysql
         - name: mysql-conf
-          mountPath: '/etc/mysql/conf.d'
+          mountPath: '/etc/mysql/conf.d/'
       volumes:
       - name: mysql-persistent-volume
         persistentVolumeClaim:
@@ -41,3 +45,10 @@ spec:
           items:
             - key: 'squash-db.cnf'
               path: 'squash-db.cnf'
+            - key: 'docker.cnf'
+              path: 'docker.cnf'
+            - key: 'mariadb.cnf'
+              path: 'mariadb.cnf'
+            - key: 'mysqld_safe_syslog.cnf'
+              path: 'mysqld_safe_syslog.cnf'
+

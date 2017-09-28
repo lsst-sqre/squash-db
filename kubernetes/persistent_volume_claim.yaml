@@ -3,7 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-volume-claim
   labels:
-    app: squash-api
+    app: squash
 spec:
   accessModes:
     - ReadWriteOnce
