@@ -1,10 +1,8 @@
 all:
-MYSQL_CONFIG = kubernetes/mysql/squash-db.cnf
+MYSQL_CONFIG = kubernetes/mysql
 MYSQL_PASSWD = passwd.txt
 LOCAL_VOLUME_CONFIG = kubernetes/local_volume.yaml
-GKE_VOLUME_CONFIG = kubernetes/gke_volume.yaml
 PERSISTENT_VOLUME_CLAIM_CONFIG = kubernetes/persistent_volume_claim.yaml
-
 DEPLOYMENT_CONFIG = kubernetes/deployment.yaml
 SERVICE_CONFIG = kubernetes/service.yaml
 
@@ -23,16 +21,13 @@ service:
 	kubectl delete --ignore-not-found=true services squash-db
 	kubectl create -f $(SERVICE_CONFIG)
 
-deployment: secret configmap service
+deployment: service secret configmap
 	@echo "Creating deployment..."
 
 	kubectl delete --ignore-not-found=true PersistentVolume mysql-volume-1
 	@if [ "${LOCAL_VOLUME}" = "true" ]; then\
 	    echo "Creating a local persistent volume ...";\
 	    kubectl create -f $(LOCAL_VOLUME_CONFIG);\
-	else\
-	    echo "Creating a GKE persistent volume...";\
-	    kubectl create -f $(GKE_VOLUME_CONFIG);\
 	fi
 
 	kubectl delete --ignore-not-found=true PersistentVolumeClaim mysql-volume-claim
@@ -40,6 +35,7 @@ deployment: secret configmap service
 
 	kubectl delete --ignore-not-found=true deployment squash-db
 	kubectl create -f $(DEPLOYMENT_CONFIG)
+
 
 clean:
 	rm $(MYSQL_PASSWD)
