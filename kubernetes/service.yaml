@@ -3,14 +3,13 @@ kind: Service
 metadata:
   name: squash-db
   labels:
-    app: squash-api
-# target port 3306 on any Pod with the squash-api label
+    app: squash
+# target port 3306 on any pod with label tier: backend
 spec:
-  selector:
-    app: squash-api
   ports:
-    - protocol: TCP
-      port: 3306
-      targetPort: 3306
-  type: ClusterIP
+    - port: 3306
+  selector:
+    app: squash
+    tier: backend
+  clusterIP: None
 
