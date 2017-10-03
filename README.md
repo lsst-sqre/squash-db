@@ -1,12 +1,12 @@
 # squash-db
 
-The SQuaSH DB microservice provides a persisten installation of `mariadb` for SQuaSH.
+The SQuaSH DB microservice provides a persistent installation of `mariadb` for SQuaSH.
 
 ![SQuaSH DB microservice](squash-db.png)
 
 # Requirements
 
-There's no additional requirements for the `squash-db` installation, however the service is meant to be used with the [squash-api](https://github.com/lsst-sqre/squash-api) and operations like database migration or loading of test data must be done from the [squash-api](https://github.com/lsst-sqre/squash-api) using Django's `manage.py`.
+There's no additional requirements for deploying `squash-db`, however the service is meant to be used with the [squash-api](https://github.com/lsst-sqre/squash-api) and operations like database migration or test data loading must be done from the [squash-api](https://github.com/lsst-sqre/squash-api) using Django's `manage.py`.
 
 ## Kubernetes deployment
 
