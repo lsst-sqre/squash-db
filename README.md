@@ -48,12 +48,50 @@ kubectl exec -it <squash-api pod> -c api /bin/bash
 mysql -hsquash-db -uroot -p<database password>
 ```
 
-## Restoring a copy of SQuaSH's production database
+## Scheduling periodic database backups
 
-For local tests it's useful to restore a copy of the production SQuaSH database. Currently, you can get that from 
-AWS S3 backups (you will need your AWS credentials). We plan to change the database backups to kubernetes, so this
-[will change soon](https://jira.lsstcorp.org/browse/DM-11486).
+For database backups we use [kube-backup](https://github.com/lsst-sqre/kube-backup) which provides a utility container to back up files and databases from other containers.
 
+There's a Kubernetes [Cron Job configuration](https://github.com/lsst-sqre/squash-db/kubernetes/squash-db-backup.yaml) to schedule backup jobs daily. It's meant to work only in the `squash-prod` namespace.  
+In order to create the required secret for `kube-backup` you have to set the following environment variables:
+
+```
+export AWS_ACCESS_KEY_ID=<your AWS credentials>
+export AWS_SECRET_ACCESS_KEY=<your AWS credentials>
+export S3_BUCKET=<the S3 bucket URI to where we want to store the database backups>
+export SLACK_WEBHOOK=<the Slack webhook URL for the #dm-square-status channel>
+```
+
+and then type `make squash_db_backup`.
+
+Output example:
+
+```bash
+
+$ make squash-db-backup
+Creating backup secret
+kubectl delete --ignore-not-found=true secrets squash-db-backup
+secret "squash-db-backup" deleted
+kubectl create secret generic squash-db-backup \
+        --from-literal=AWS_ACCESS_KEY_ID=*******
+        --from-literal=AWS_SECRET_ACCESS_KEY=******* \
+        --from-literal=S3_BUCKET=******* \
+        --from-literal=SLACK_WEBHOOK=******** 
+secret "squash-db-backup" created
+Schedule periodic backups for squash-db
+kubectl delete --ignore-not-found=true cronjob squash-db-backup
+cronjob "squash-db-backup" deleted
+kubectl create -f kubernetes/squash-db-backup.yaml
+cronjob "squash-db-backup" created
+```
+
+## Restoring a copy of the current SQuaSH's production database
+
+
+You can get a copy from the current production database from
+AWS S3 (you will need your AWS credentials). 
+
+Note that this procedure will change once we switch over to the new production deployment, see [DM-11486](https://jira.lsstcorp.org/browse/DM-11486).
 This can be done opening a terminal inside the `squash-db` or `squash-api` pods.
 
 ```
@@ -68,7 +106,6 @@ mysql -uroot -p<passwd> qadb < latest.sql
 # The following is nedeed since the name of the django app changed 
 # from 'dashboard' to 'api' in the current implementation. 
  
-MariaDB [qadb]> rename table dashboard_job to api_job, dashboard_measurement to api_measurement, dashboard_metric to api_metric, dashboard_versionedpackage to api_versionedpackage;
-Query OK, 0 rows affected (0.062 sec)
+mysql -uroot -p<passwd> qadb -e "RENAME TABLE dashboard_job to api_job, dashboard_measurement to api_measurement, dashboard_metric to api_metric, dashboard_versionedpackage to api_versionedpackage"
 
 ```
