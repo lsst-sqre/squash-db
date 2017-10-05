@@ -85,27 +85,19 @@ kubectl create -f kubernetes/squash-db-backup.yaml
 cronjob "squash-db-backup" created
 ```
 
-## Restoring a copy of the current SQuaSH's production database
+## Restoring a copy of the production database
 
-
-You can get a copy from the current production database from
+You can get a backup copy of the current production database from
 AWS S3 (you will need your AWS credentials). 
 
-Note that this procedure will change once we switch over to the new production deployment, see [DM-11486](https://jira.lsstcorp.org/browse/DM-11486).
-This can be done opening a terminal inside the `squash-db` or `squash-api` pods.
-
 ```
-aws s3 cp s3://jenkins-prod-qadb.lsst.codes-backups/qadb/latest.sql.gz .
-gzip -d latest.sql.gz
-
-kubectl cp latest.sql <squash-db pod>:/
+aws s3 ls s3://jenkins-prod-qadb.lsst.codes-backups/squash-prod/
+aws s3 cp s3://jenkins-prod-qadb.lsst.codes-backups/squash-prod/<YYYYMMDD-HHMM>/squash-db-mariadb-qadb-<YYYYMMDD-HHMM>.gz .
+ 
+kubectl cp squash-db-mariadb-qadb-<YYYYMMDD-HHMM>.gz <squash-db pod>:/
+ 
 kubectl exec -it <squash-db pod> /bin/bash
+gzip -d squash-db-mariadb-qadb-<YYYYMMDD-HHMM>.gz 
  
-mysql -uroot -p<passwd> qadb < latest.sql
- 
-# The following is nedeed since the name of the django app changed 
-# from 'dashboard' to 'api' in the current implementation. 
- 
-mysql -uroot -p<passwd> qadb -e "RENAME TABLE dashboard_job to api_job, dashboard_measurement to api_measurement, dashboard_metric to api_metric, dashboard_versionedpackage to api_versionedpackage"
-
+mysql -uroot -p<passwd> qadb < squash-db-mariadb-qadb-<YYYYMMDD-HHMM>
 ```
