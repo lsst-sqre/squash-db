@@ -66,8 +66,7 @@ and then type `make squash_db_backup`.
 
 Output example:
 
-```bash
-
+```
 $ make squash-db-backup
 Creating backup secret
 kubectl delete --ignore-not-found=true secrets squash-db-backup
@@ -75,7 +74,7 @@ secret "squash-db-backup" deleted
 kubectl create secret generic squash-db-backup \
         --from-literal=AWS_ACCESS_KEY_ID=*******
         --from-literal=AWS_SECRET_ACCESS_KEY=******* \
-        --from-literal=S3_BUCKET=******* \
+        --from-literal=S3_BUCKET=jenkins-prod-qadb.lsst.codes-backups\
         --from-literal=SLACK_WEBHOOK=******** 
 secret "squash-db-backup" created
 Schedule periodic backups for squash-db
