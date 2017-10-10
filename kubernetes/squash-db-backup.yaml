@@ -1,0 +1,21 @@
+apiVersion: batch/v2alpha1
+kind: CronJob
+metadata:
+  name: squash-db-backup
+  namespace: squash-prod
+spec:
+  schedule: "@daily"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - args:
+            - --task=backup-mysql-exec
+            - --namespace=squash-prod
+            - --selector=app=squash,tier=database
+            - --container=mariadb
+            - --secret=squash-db-backup
+            image: lsstsqre/kube-backup:latest
+            name: squash-db-backup
+          restartPolicy: OnFailure

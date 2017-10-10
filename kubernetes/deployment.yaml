@@ -11,7 +11,7 @@ spec:
     metadata:
       labels:
         app: squash
-        tier: backend
+        tier: database
     spec:
       containers:
       - image: mariadb:10.3

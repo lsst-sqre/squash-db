@@ -4,12 +4,12 @@ metadata:
   name: squash-db
   labels:
     app: squash
-# target port 3306 on any pod with label tier: backend
+# target port 3306 on any pod with label 'tier: database'
 spec:
   ports:
     - port: 3306
   selector:
     app: squash
-    tier: backend
+    tier: database
   clusterIP: None
 
