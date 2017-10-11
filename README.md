@@ -58,7 +58,7 @@ In order to create the required secret for `kube-backup` you have to set the fol
 ```
 export AWS_ACCESS_KEY_ID=<your AWS credentials>
 export AWS_SECRET_ACCESS_KEY=<your AWS credentials>
-export S3_BUCKET=<the S3 bucket URI to where we want to store the database backups>
+export S3_BUCKET=jenkins-prod-qadb.lsst.codes-backups
 export SLACK_WEBHOOK=<the Slack webhook URL for the #dm-square-status channel>
 ```
 
