@@ -60,7 +60,7 @@ In order to create the required secret you have to set the following environment
 ```
 export AWS_ACCESS_KEY_ID=<your AWS credentials>
 export AWS_SECRET_ACCESS_KEY=<your AWS credentials>
-export S3_BUCKET=<the S3 bucket URI to where we want to store the database backups>
+export S3_BUCKET=jenkins-prod-qadb.lsst.codes-backups
 export SLACK_WEBHOOK=<the Slack webhook URL for the #dm-square-status channel>
 ```
 
@@ -80,7 +80,7 @@ secret "squash-db-backup" deleted
 kubectl create secret generic squash-db-backup \
         --from-literal=AWS_ACCESS_KEY_ID=*******
         --from-literal=AWS_SECRET_ACCESS_KEY=******* \
-        --from-literal=S3_BUCKET=******* \
+        --from-literal=S3_BUCKET=jenkins-prod-qadb.lsst.codes-backups\
         --from-literal=SLACK_WEBHOOK=******** 
 secret "squash-db-backup" created
 Schedule periodic backups for squash-db
