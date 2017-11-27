@@ -7,6 +7,11 @@ DEPLOYMENT_CONFIG = kubernetes/deployment.yaml
 SERVICE_CONFIG = kubernetes/service.yaml
 DB_BACKUP_CONFIG = kubernetes/squash-db-backup.yaml
 
+$(MYSQL_PASSWD):
+	@echo "Enter a password for the SQuaSH DB:"
+	@read MYSQL_PASSWD; \
+	echo $$MYSQL_PASSWD | tr -d '\n' > $(MYSQL_PASSWD)
+
 mysql-secret: $(MYSQL_PASSWD)
 	@echo "Creating secret for squash-db password..."
 	kubectl delete --ignore-not-found=true secrets mysql-passwd
