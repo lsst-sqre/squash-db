@@ -119,7 +119,7 @@ You can get a copy of the production database from the daily back ups (see above
 
 ```
 aws s3 ls s3://jenkins-prod-qadb.lsst.codes-backups/squash-prod/
-aws s3 cp s3://jenkins-prod-qadb.lsst.codes-backups/squash-prod/<YYYYMMDD-HHMM>/squash-db-mariadb-qadb-<YYYYMMDD-HHMM>.gz .
+aws s3 cp s3://jenkins-prod-qadb.lsst.codes-backups/squash-prod/<YYYYMMDD-HHMM>/<squash-db pod>-mariadb-qadb-<YYYYMMDD-HHMM>.gz .
  
 kubectl cp squash-db-mariadb-qadb-<YYYYMMDD-HHMM>.gz <squash-db pod>:/
  
